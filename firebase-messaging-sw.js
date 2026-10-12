@@ -16,12 +16,12 @@ importScripts(
 // นำค่าจาก Firebase Console > Project settings > General
 // > Your apps > SDK setup and configuration
 firebase.initializeApp({
-  apiKey: 'YOUR_FIREBASE_API_KEY',
-  authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT_ID.firebasestorage.app',
-  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-  appId: 'YOUR_FIREBASE_APP_ID'
+  apiKey: 'AIzaSyDIhh5w4vXe51If94-BXdSsjxVcIwY1qkU',
+  authDomain: 'fcm-push-notification-hoc-pos.firebaseapp.com',
+  projectId: 'fcm-push-notification-hoc-pos',
+  storageBucket: 'fcm-push-notification-hoc-pos.firebasestorage.app',
+  messagingSenderId: '461555325582',
+  appId: '1:461555325582:web:f8dcc379d84d34b1f487df'
 });
 
 // 3. เริ่มต้น Firebase Messaging
