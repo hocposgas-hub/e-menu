@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/16167/16167341.png">
+
+    <!-- Title -->
+    <title>MCH-Emanu Pos</title>
+
+    <!-- Firebase SDK (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
+
+    <style>
+        /* ล้างค่าขอบ และล็อกหน้าจอไม่ให้เลื่อน */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+
+        /* กล่องครอบสำหรับซ่อนแถบเทาด้านบนของ Google Apps Script */
+        .iframe-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ปรับระยะดึงขึ้นไปเฉพาะพอดีซ่อนแถบเทา และขยายความสูงลงล่าง */
+        .iframe-wrapper iframe {
+            width: 100%;
+            height: 100%; 
+            border: none;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="iframe-wrapper">
+        <!-- ไอเฟรมที่จะเปลี่ยน URL ตามพารามิเตอร์อัตโนมัติ -->
+        <iframe id="app-iframe" scrolling="yes" allowfullscreen loading="lazy"></iframe>
+    </div>
+
+    <script>
+        // 1. ตั้งค่า Firebase ของคุณ
+        const firebaseConfig = {
+            apiKey: "ใส่_API_KEY_ของคุณ",
+            authDomain: "ใส่_AUTH_DOMAIN_ของคุณ",
+            projectId: "ใส่_PROJECT_ID_ของคุณ",
+            messagingSenderId: "ใส่_MESSAGING_SENDER_ID_ของคุณ",
+            appId: "ใส่_APP_ID_ของคุณ"
+        };
+
+        // 2. กำหนด VAPID Key สำหรับ Web Push
+        const FIREBASE_VAPID_KEY = "ใส่_VAPID_KEY_ของคุณ";
+
+        // เริ่มต้นใช้งาน Firebase บน GitHub Pages 
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const messaging = firebase.messaging();
+
+        // ฟังก์ชันลงทะเบียน Service Worker และขอสิทธิ์แจ้งเตือน
+        async function initFCM() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    // ลงทะเบียนบนโดเมน GitHub Pages โดยตรง
+                    const registration = await navigator.serviceWorker.register('/e-menu/firebase-messaging-sw.js', {
+                        scope: '/e-menu/'
+                    });
+                    console.log('Service Worker registered successfully with scope:', registration.scope);
+
+                    const permission = await Notification.requestPermission();
+                    if (permission === 'granted') {
+                        console.log('Notification permission granted.');
+
+                        const currentToken = await messaging.getToken({
+                            vapidKey: FIREBASE_VAPID_KEY,
+                            serviceWorkerRegistration: registration
+                        });
+
+                        if (currentToken) {
+                            console.log('FCM Token obtained:', currentToken);
+                            // ส่ง Token นี้ไปบันทึกลง Supabase หรือส่งต่อให้ iframe หากจำเป็น
+                        } else {
+                            console.warn('No registration token available.');
+                        }
+                    } else {
+                        console.warn('Notification permission denied.');
+                    }
+                } catch (err) {
+                    console.error('Service Worker registration or FCM token error:', err);
+                }
+            }
+        }
+
+        // รันฟังก์ชันขอสิทธิ์ FCM เมื่อเปิดหน้าเว็บ
+        initFCM();
+
+        // 3. ลิงก์ Web App หลักของ Google Apps Script คุณ
+        var baseGasUrl = "https://script.google.com/macros/s/AKfycbxCJRAA4qVRbXqkTK1_65pzXkqQogLJt3PhFtZ2H2ILP3jaRRa1qHGEsnaO-w7C4__wNQ/exec";
+
+        // 4. ดึงค่า Query Parameters ปัจจุบันของ GitHub Pages (เช่น ?page=staff หรือ ?table=A1)
+        var queryString = window.location.search;
+
+        // 5. ประกอบร่างและยัดใส่ src ของ iframe
+        document.getElementById('app-iframe').src = baseGasUrl + queryString;
+    </script>
+</body>
+</html>
