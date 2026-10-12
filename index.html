@@ -63,6 +63,9 @@
         // 2. กำหนด VAPID Key สำหรับ Web Push
         const FIREBASE_VAPID_KEY = "BF9bNpfCcNd9PG1qN3Ev07KXGlpjxwreLAzEWiKF15bY0m8Q1c6-jvwzyBZz3EN8DH5sYvzTQWuXYagh6G6H2tg";
 
+        // 3. ลิงก์ Web App หลักของ Google Apps Script (ย้ายมาประกาศไว้ด้านบนสุดเพื่อให้พร้อมใช้งาน)
+        var baseGasUrl = "https://script.google.com/macros/s/AKfycbxCJRAA4qVRbXqkTK1_65pzXkqQogLJt3PhFtZ2H2ILP3jaRRa1qHGEsnaO-w7C4__wNQ/exec";
+
         // เริ่มต้นใช้งาน Firebase บน GitHub Pages 
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
@@ -91,15 +94,13 @@
                         if (currentToken) {
                             console.log('FCM Token obtained:', currentToken);
 
-                            // ส่ง Token วิ่งไปที่ doPost ของ Google Apps Script เพื่อบันทึกลง Supabase
+                            // ส่งเฉพาะ token วิ่งไปที่ doPost ของ Google Apps Script
                             fetch(baseGasUrl, {
                                 method: 'POST',
                                 mode: 'no-cors',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
-                                    action: 'save_fcm_token',
-                                    token: currentToken,
-                                    role: 'staff' // หรือเปลี่ยนเป็น 'kds' ตามหน้าเว็บที่ใช้งาน
+                                    token: currentToken
                                 })
                             }).then(() => {
                                 console.log('FCM Token sent to GAS successfully.');
@@ -119,9 +120,6 @@
 
         // รันฟังก์ชันขอสิทธิ์ FCM เมื่อเปิดหน้าเว็บ
         initFCM();
-
-        // 3. ลิงก์ Web App หลักของ Google Apps Script คุณ
-        var baseGasUrl = "https://script.google.com/macros/s/AKfycbxCJRAA4qVRbXqkTK1_65pzXkqQogLJt3PhFtZ2H2ILP3jaRRa1qHGEsnaO-w7C4__wNQ/exec";
 
         // 4. ดึงค่า Query Parameters ปัจจุบันของ GitHub Pages (เช่น ?page=staff หรือ ?table=A1)
         var queryString = window.location.search;
