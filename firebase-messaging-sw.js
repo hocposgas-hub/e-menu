@@ -32,17 +32,10 @@ messaging.onBackgroundMessage((payload) => {
   console.log('[FCM SW] Received background message:', payload);
   const data = payload.data || {};
   const notification = payload.notification || {};
-  const title =
-
-    notification.title ||
-    data.title ||
-    'MCH-EMenu POS';
+  const title = notification.title || data.title || 'MCH-EMenu POS';
 
   const options = {
-    body:
-      notification.body ||
-      data.body ||
-      'มีรายการใหม่ กรุณาตรวจสอบระบบ POS',
+    body: notification.body || data.body || 'มีรายการใหม่ กรุณาตรวจสอบระบบ POS',
     icon: './icon-192.png',
     badge: './icon-192.png',
     tag: data.notificationId || data.orderId || 'mch-pos-notification',
@@ -53,9 +46,8 @@ messaging.onBackgroundMessage((payload) => {
     }
   };
 
-  // ป้องกันการแสดงซ้ำในกรณีที่ข้อความมี notification payload
-  // ให้ Backend ส่ง data-only payload สำหรับการใช้ Handler นี้
-  return self.registration.showNotification(title, options);
+  // 🔴 เอาคำว่า return ออก ตรงนี้
+  self.registration.showNotification(title, options);
 
 });
 
