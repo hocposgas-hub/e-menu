@@ -90,7 +90,21 @@
 
                         if (currentToken) {
                             console.log('FCM Token obtained:', currentToken);
-                            // ส่ง Token นี้ไปบันทึกลง Supabase หรือส่งต่อให้ iframe หากจำเป็น
+
+                            // ส่ง Token วิ่งไปที่ doPost ของ Google Apps Script เพื่อบันทึกลง Supabase
+                            fetch(baseGasUrl, {
+                                method: 'POST',
+                                mode: 'no-cors',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    action: 'save_fcm_token',
+                                    token: currentToken,
+                                    role: 'staff' // หรือเปลี่ยนเป็น 'kds' ตามหน้าเว็บที่ใช้งาน
+                                })
+                            }).then(() => {
+                                console.log('FCM Token sent to GAS successfully.');
+                            });
+
                         } else {
                             console.warn('No registration token available.');
                         }
