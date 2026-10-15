@@ -34,7 +34,7 @@
         /* ปรับระยะดึงขึ้นไปเฉพาะพอดีซ่อนแถบเทา (ประมาณ 40px) และขยายความสูงลงล่าง */
         .iframe-wrapper iframe {
             width: 100%;
-            height: calc(100% ); 
+            height: calc(100%); 
             border: none;
             display: block;
         }
@@ -42,8 +42,8 @@
 </head>
 <body>
     <div class="iframe-wrapper">
-        <!-- ไอเฟรมที่จะเปลี่ยน URL ตามพารามิเตอร์อัตโนมัติ -->
-        <iframe id="app-iframe" scrolling="yes" allowfullscreen loading="lazy"></iframe>
+        <!-- 🔹 เพิ่ม allow="geolocation" ตรงนี้เพื่อให้ iframe อนุญาตให้ขอพิกัด GPS ได้ -->
+        <iframe id="app-iframe" scrolling="yes" allow="geolocation" allowfullscreen loading="lazy"></iframe>
     </div>
 
     <script>
