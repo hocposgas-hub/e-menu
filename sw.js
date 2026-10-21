@@ -1,53 +1,47 @@
-self.addEventListener('push', event => {
-  let data = {
-    title: 'HOC POS — ออเดอร์ใหม่',
-    body: 'มีรายการอาหารใหม่เข้าครัว',
-    url: '/'
-  };
+self.addEventListener("push", (event) => {
+  let data = {};
 
-  if (event.data) {
-    try {
-      data = { ...data, ...event.data.json() };
-    } catch (error) {
-      data.body = event.data.text();
-    }
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch (error) {
+    data = {
+      title: "HOC POS",
+      body: event.data?.text() || "มีออเดอร์ใหม่"
+    };
   }
 
   event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body: data.body,
-      icon: '/favicon.ico',
-      badge: '/favicon.ico',
-      tag: data.orderId || 'hoc-pos-order',
-      renotify: true,
+    self.registration.showNotification(data.title || "HOC POS", {
+      body: data.body || "มีออเดอร์ใหม่",
+      tag: data.tag || "hoc-pos",
       data: {
-        url: data.url || '/'
+        url: data.url || "/e-menu/?page=kds"
       }
     })
   );
 });
 
-self.addEventListener('notificationclick', event => {
+self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
-  const targetUrl = new URL(
-    event.notification.data?.url || '/',
+  const target = new URL(
+    event.notification.data?.url || "/e-menu/?page=kds",
     self.location.origin
-  ).href;
+  );
 
   event.waitUntil(
     clients.matchAll({
-      type: 'window',
+      type: "window",
       includeUncontrolled: true
-    }).then(windowClients => {
-      for (const client of windowClients) {
+    }).then(async (windows) => {
+      for (const client of windows) {
         if (client.url.startsWith(self.location.origin)) {
-          client.focus();
-          return;
+          await client.navigate(target.href);
+          return client.focus();
         }
       }
 
-      return clients.openWindow(targetUrl);
+      return clients.openWindow(target.href);
     })
   );
 });
