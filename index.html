@@ -6,14 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/16167/16167341.png">
+    <link rel="icon" type="image/png"
+          href="https://cdn-icons-png.flaticon.com/128/16167/16167341.png">
 
-    <!-- Title -->
     <title>HOC POS</title>
 
     <style>
-        /* ล้างค่าขอบ และล็อกหน้าจอไม่ให้เลื่อน */
         html, body {
             margin: 0;
             padding: 0;
@@ -23,7 +21,6 @@
             background-color: #ffffff;
         }
 
-        /* กล่องครอบสำหรับซ่อนแถบเทาด้านบนของ Google Apps Script */
         .iframe-wrapper {
             width: 100%;
             height: 100%;
@@ -31,30 +28,35 @@
             position: relative;
         }
 
-        /* ปรับระยะดึงขึ้นไปเฉพาะพอดีซ่อนแถบเทา (ประมาณ 40px) และขยายความสูงลงล่าง */
         .iframe-wrapper iframe {
             width: 100%;
-            height: calc(100%); 
+            height: 100%;
             border: none;
             display: block;
         }
     </style>
 </head>
+
 <body>
     <div class="iframe-wrapper">
-        <!-- 🔹 เพิ่ม allow="geolocation" ตรงนี้เพื่อให้ iframe อนุญาตให้ขอพิกัด GPS ได้ -->
-        <iframe id="app-iframe" scrolling="yes" allow="geolocation" allowfullscreen loading="lazy"></iframe>
+        <iframe
+            id="app-iframe"
+            scrolling="yes"
+            allow="autoplay; fullscreen; geolocation"
+            allowfullscreen>
+        </iframe>
     </div>
 
     <script>
-        // 1. ลิงก์ Web App หลักของ Google Apps Script คุณ
-        var baseGasUrl = "https://script.google.com/macros/s/AKfycbxk_oWVjpHZ2fAmwJGh0s5uAF7r48gwV6cP8y7GcZujtPSPWvH2R5pBTW97OeDH0LYAvA/exec";
+        // URL ของ Google Apps Script Web App
+        const baseGasUrl =
+            "https://script.google.com/macros/s/AKfycbxk_oWVjpHZ2fAmwJGh0s5uAF7r48gwV6cP8y7GcZujtPSPWvH2R5pBTW97OeDH0LYAvA/exec";
 
-        // 2. ดึงค่า Query Parameters ปัจจุบันของ GitHub Pages (เช่น ?page=staff หรือ ?table=A1)
-        var queryString = window.location.search;
+        // ส่ง Query Parameters ไปยัง Apps Script
+        const queryString = window.location.search;
 
-        // 3. ประกอบร่างและยัดใส่ src ของ iframe เพื่อส่งต่อให้ฟังก์ชัน doGet(e) ของ Apps Script จัดการต่อ
-        document.getElementById('app-iframe').src = baseGasUrl + queryString;
+        const iframe = document.getElementById('app-iframe');
+        iframe.src = baseGasUrl + queryString;
     </script>
 </body>
 </html>
